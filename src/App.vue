@@ -1,8 +1,8 @@
 <template>
   <div className="wrapper">
     <h1>Weather App</h1>
-    <p>Check the weather in your city</p>
-    <input type="text" placeholder="Enter your city">
+    <p>Check the weather in {{ city == '' ? 'your city' : city }}</p>
+    <input type="text" placeholder="Enter your city" v-model="city">
     <button>go</button>
   </div>
 </template>
@@ -13,6 +13,9 @@ export default {
   },
 
   data() {
+    return {
+      city: '',
+    }
   },
   methods: {
   },
