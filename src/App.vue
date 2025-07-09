@@ -3,21 +3,66 @@
     <h1>Weather App</h1>
     <p>Check the weather in {{ city == '' ? 'your city' : city }}</p>
     <input type="text" placeholder="Enter your city" v-model="city">
-    <button>go</button>
+    <button v-show="city != ''" @click="getWeather()">go</button>
+    <p className="error">{{ error }}</p>
+
+    <div v-show="info != null">
+      <p>{{ curWeather }}</p>
+      <p>{{ curTemp }}</p>
+      <p>{{ feelsLike }}</p>
+      <p>{{ minTemp }}</p>
+      <p>{{ maxTemp }}</p>
+      <p>{{ humidity }}</p>
+      <p>{{ windSpeed }}</p>
+    </div>
   </div>
 </template>
 
 <script>
-export default {
-  components: {
-  },
+import axios from 'axios'
 
+export default {
   data() {
     return {
       city: '',
+      error: '',
+      info: null,
     }
   },
   methods: {
+    getWeather() {
+      if (this.city.trim().length < 2) {
+        this.error = 'Need more than 1 symbol'
+        return false
+      }
+      this.error = ''
+
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&APPID=d3de50686c876ef67661ed5a7ae801d0`)
+      .then(response => this.info = response.data)
+    },
+  },
+  computed: {
+    curWeather() {
+      return this.info ? 'Current weather is ' + this.info.weather[0].description : ''
+    },
+    curTemp() {
+      return this.info ? 'Current temperature is ' + this.info.main.temp : ''
+    },
+    feelsLike() {
+      return this.info ? 'Feels like ' + this.info.main.feels_like : ''
+    },
+    minTemp() {
+      return this.info ? 'Minimal temperature is ' + this.info.main.temp_min : ''
+    },
+    maxTemp() {
+      return this.info ? 'Maximal temperature is ' + this.info.main.temp_max : ''
+    },
+    humidity() {
+      return this.info ? 'Current humidity is ' + this.info.main.humidity : ''
+    },
+    windSpeed() {
+      return this.info ? 'Current wind speed is ' + this.info.wind.speed : ''
+    },
   },
 }
 </script>
@@ -53,6 +98,7 @@ export default {
 
 .wrapper input::placeholder {
   color: #fff;
+  text-align: center;
 }
 
 .wrapper input:focus {
@@ -72,6 +118,10 @@ export default {
 
 .wrapper button:hover {
   transform: scale(1.1) translateY(-5px);
+}
+
+.error {
+  color: tomato;
 }
 
 </style>
